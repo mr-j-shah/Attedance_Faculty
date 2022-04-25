@@ -154,10 +154,9 @@ class _basehomeState extends State<basehome> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _bottomNavigationBar(
-                      Icons.qr_code_scanner_sharp, 'QR Scanner', 0),
-                  _middelbar(Icons.manage_accounts, 'Edit', 1),
-                  _bottomNavigationBar(Icons.home_filled, 'Profile', 2),
+                  _bottomNavigationBar(Icons.home_filled, 'Home', 0),
+                  _middelbar(Icons.add, 'Add Lecture', 1),
+                  _bottomNavigationBar(Icons.man_outlined, 'Profile', 2),
                 ],
               ),
             ),

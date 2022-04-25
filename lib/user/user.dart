@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class user {
   static final user _currentUser = user._internal();
   String? name;
@@ -17,4 +19,25 @@ class user {
 
 class Lecture {
   String? subject, sem, time, date;
+  Lecture() {}
+
+  Lecture.fromDocument(DocumentSnapshot doc) {
+    final data = doc.data()! as Map<String, dynamic>;
+    subject = data['Subject'];
+    sem = data['Semester'];
+    time = data['Time'];
+    date = data['Date'];
+  }
+}
+
+class Attedance {
+  String? enrollment, name, email;
+  Attedance() {}
+
+  Attedance.fromDocument(DocumentSnapshot doc) {
+    final data = doc.data()! as Map<String, dynamic>;
+    enrollment = data['Enrollment'];
+    name = data['Name'];
+    email = data['email'];
+  }
 }
