@@ -1,6 +1,7 @@
 # admin
 
-A new Flutter project.
+  This is a application for Admin panel to add lecture for attendance.
+  And using a qr code from onlineid appliation you can add your attendance for the particular lecture.
 
 ## Getting Started
 
