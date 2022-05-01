@@ -1,12 +1,11 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:admin/qrcode/qrcode.dart';
 import 'package:admin/screens/basehome.dart';
 import 'package:admin/user/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+// import 'package:qr_flutter/qr_flutter.dart';
 
 class addlec extends StatefulWidget {
   addlec({Key? key}) : super(key: key);
@@ -14,13 +13,16 @@ class addlec extends StatefulWidget {
   State<addlec> createState() => _editState();
 }
 
+TimeOfDay initialTime = new TimeOfDay(hour: 00, minute: 00);
+
 class _editState extends State<addlec> {
   final formkey = GlobalKey<FormState>();
   Lecture lecture = new Lecture();
   bool isloading = true;
   String? email = FirebaseAuth.instance.currentUser!.email;
   String? _currentSelectedValue;
-
+  String dropdownvalue = '1';
+  List<String> items = ['1', '2', '3', '4', '5', '6', '7', '8'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,12 +36,7 @@ class _editState extends State<addlec> {
                 Padding(
                   padding: EdgeInsets.all(20),
                   child: Container(
-                    // width: MediaQuery.of(context).size.width * 0.7,
                     color: Colors.white70,
-                    // child: Card(
-                    //   child: MyStatefulWidget(),
-                    // ),
-
                     child: TextFormField(
                       onChanged: (ValueKey) {
                         setState(() {
@@ -55,40 +52,76 @@ class _editState extends State<addlec> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Container(
-                    // width: MediaQuery.of(context).size.width * 0.7,
-                    // child: Card(
-                    //   child: MyStatefulWidget(),
-                    // ),
-                    child: TextFormField(
-                      onChanged: (ValueKey) {
-                        setState(() {
-                          lecture.sem = ValueKey;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Semester',
-                        hintText: 'Enter Semester',
-                      ),
-                    ),
-                  ),
-                ),
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        DropdownButton(
+                          value: dropdownvalue,
+                          hint: Text('Select Semester'),
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          items: items.map((String items) {
+                            return DropdownMenuItem(
+                              value: items,
+                              child: Text(items),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              lecture.sem = newValue;
+                              dropdownvalue = newValue!;
+                            });
+                          },
+                        ),
+                        Text('*click on time to set Semster')
+                      ],
+                    )),
                 Padding(
                   padding: EdgeInsets.all(20),
-                  child: TextFormField(
-                    onChanged: (ValueKey) {
-                      setState(() {
-                        lecture.time = ValueKey;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Lecture Time',
-                      hintText: 'Enter Time of Lecture in HH:MM formate',
-                    ),
-                  ),
+                  child: Container(
+                      child: Center(
+                          child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Starting Time  :  ',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              TimeOfDay? pickedTime = await showTimePicker(
+                                context: context,
+                                initialTime: initialTime,
+                              );
+                              if (pickedTime == null) {
+                                pickedTime = initialTime;
+                              }
+                              print(pickedTime.toString());
+                              setState(() {
+                                initialTime = pickedTime!;
+                              });
+                            },
+                            child: Text(
+                              initialTime.hour.toString() +
+                                  ' : ' +
+                                  initialTime.minute.toString(),
+                              style: TextStyle(
+                                fontSize: 25.0,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "Pacifico",
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text('*click on time to set')
+                    ],
+                  ))),
                 ),
                 Padding(
                   padding: EdgeInsets.all(20),
@@ -103,18 +136,39 @@ class _editState extends State<addlec> {
                     child: FlatButton(
                       child: Text('Ok'),
                       onPressed: () {
-                        UpdateMe(
-                          sub: lecture.subject,
-                          time: lecture.time,
-                          sem: lecture.sem,
-                        );
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TicketPage(
-                                    lecture: lecture,
-                                  )),
-                        );
+                        if (lecture.subject != null &&
+                            lecture.sem != null &&
+                            lecture.time != '0 : 0') {
+                          UpdateMe(
+                              sub: lecture.subject,
+                              sem: lecture.sem,
+                              time: lecture.time);
+                          setState(() {
+                            initialTime = TimeOfDay(hour: 0, minute: 0);
+                          });
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TicketPage(
+                                      lecture: lecture,
+                                    )),
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Aleart!'),
+                              content: Text('Please select value'),
+                              actions: [
+                                FlatButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('Ok'))
+                              ],
+                            ),
+                          );
+                        }
                       },
                     ),
                   ),
@@ -158,7 +212,8 @@ class _editState extends State<addlec> {
             now.month.toString() +
             ":" +
             now.year.toString(),
-        'Time': time,
+        'Time':
+            initialTime.hour.toString() + ':' + initialTime.minute.toString(),
         'Key': now.hour.toString()
       },
     );

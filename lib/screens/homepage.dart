@@ -34,8 +34,52 @@ class _hoempageState extends State<hoempage> {
       floatingActionButton: selectcount >= 0
           ? FloatingActionButton(
               onPressed: () {
-                deleteUser(lecture[selectcount]);
-                isotherselect = true;
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    //45064C
+                    // backgroundColor: Color(0xFFF45064C),
+                    title: Text('Delete'),
+                    content: Text('Lecture Delete Sucessfully!'),
+                    actions: [
+                      FlatButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          setState(() {
+                            Navigator.of(context).pop();
+                          });
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('Ok'),
+                        onPressed: () {
+                          setState(() {
+                            deleteUser(lecture[selectcount]);
+                            isotherselect = true;
+                            selectcount = -1;
+                            isotherselect = true;
+                            getEventsByType()
+                                .then((value) => {
+                                      setState(() {
+                                        lecture = value;
+                                        isLoading = false;
+                                      })
+                                    })
+                                .onError((error, stackTrace) {
+                              print(error);
+                              print(stackTrace);
+                              setState(() {
+                                isError = true;
+                              });
+                              throw error!;
+                            });
+                            Navigator.of(context).pop();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                );
               },
               tooltip: 'Increment Counter',
               child: const Icon(Icons.delete),
@@ -218,16 +262,19 @@ class _hoempageState extends State<hoempage> {
                   lecture[index].isselect = !lecture[index].isselect;
                   if (lecture[index].isselect == true) {
                     selectcount = index;
-                    print(selectcount);
+                    print(lecture[index].isselect);
                     isotherselect = false;
-                  } else {
-                    selectcount = -1;
-                    print(selectcount);
-                    isotherselect = true;
-                  }
+                  } else if (lecture[index].isselect == true) {}
                 });
               }
-            : () {},
+            : () {
+                setState(() {
+                  lecture[index].isselect = !lecture[index].isselect;
+                  selectcount = -1;
+                  print(selectcount);
+                  isotherselect = true;
+                });
+              },
       ),
     );
   }
@@ -253,44 +300,6 @@ class _hoempageState extends State<hoempage> {
         .collection('lecture')
         .doc(getdetails(lecturedata))
         .delete()
-        .then(
-          (value) => showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              //45064C
-              // backgroundColor: Color(0xFFF45064C),
-              title: Text('Delete'),
-              content: Text('Lecture Delete Sucessfully!'),
-              actions: [
-                FlatButton(
-                  child: Text('Ok'),
-                  onPressed: () {
-                    setState(() {
-                      selectcount = -1;
-                      isotherselect = true;
-                      getEventsByType()
-                          .then((value) => {
-                                setState(() {
-                                  lecture = value;
-                                  isLoading = false;
-                                })
-                              })
-                          .onError((error, stackTrace) {
-                        print(error);
-                        print(stackTrace);
-                        setState(() {
-                          isError = true;
-                        });
-                        throw error!;
-                      });
-                      Navigator.of(context).pop();
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        )
         .catchError((error) => print("Failed to delete user: $error"));
   }
 }
