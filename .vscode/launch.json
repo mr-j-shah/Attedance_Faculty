@@ -22,15 +22,6 @@
             "type": "dart",
             "flutterMode": "release"
         },
-        {
-            "name": "web",
-            "program": "lib/main.dart",
-            "request": "launch",
-            "type": "dart",
-            "args": [
-                "--web-port=32140",
-                "--web-enable-expression-evaluation"
-            ],
-        },
+        
     ]
 }

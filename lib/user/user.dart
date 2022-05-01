@@ -18,7 +18,8 @@ class user {
 }
 
 class Lecture {
-  String? subject, sem, time, date;
+  String? subject, sem, time, date, keyid;
+  bool isselect = false;
   Lecture() {}
 
   Lecture.fromDocument(DocumentSnapshot doc) {
@@ -27,6 +28,7 @@ class Lecture {
     sem = data['Semester'];
     time = data['Time'];
     date = data['Date'];
+    keyid = data['Key'];
   }
 }
 
@@ -40,4 +42,31 @@ class Attedance {
     name = data['Name'];
     email = data['email'];
   }
+}
+
+class Subject {
+  String? subjectname, subjectcode, sem;
+  Subject() {}
+
+  Subject.fromDocumentsubject(DocumentSnapshot doc) {
+    final data = doc.data()! as Map<String, dynamic>;
+    subjectname = data['Name'];
+  }
+}
+
+class student {
+  static final student _currentUser = student._internal();
+  String? name;
+  String? number;
+  String? dob;
+  String? blood;
+  String? department;
+  String? email;
+  String? phone;
+  String? location;
+  factory student() {
+    return _currentUser;
+  }
+
+  student._internal();
 }

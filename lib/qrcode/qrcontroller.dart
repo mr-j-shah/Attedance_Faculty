@@ -21,6 +21,8 @@ class TicketController {
               ":" +
               now.year.toString() +
               ":" +
+              now.hour.toString() +
+              ":" +
               _lecture.sem! +
               ":" +
               _lecture.subject!)

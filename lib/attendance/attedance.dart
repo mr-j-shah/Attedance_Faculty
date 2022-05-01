@@ -1,3 +1,4 @@
+import 'package:admin/attendance/studentprof.dart';
 import 'package:admin/user/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -65,6 +66,8 @@ class _attendState extends State<attend> {
         .collection('lecture')
         .doc(widget.lecture.date.toString() +
             ":" +
+            widget.lecture.keyid.toString() +
+            ":" +
             widget.lecture.sem.toString() +
             ":" +
             widget.lecture.subject.toString())
@@ -85,7 +88,28 @@ class _attendState extends State<attend> {
           child: Card(
             margin: EdgeInsets.all(5),
             color: Colors.white70,
-            child: Text(student[index].enrollment.toString()),
+            child: Center(
+              child: InkWell(
+                child: Text(
+                  student[index].enrollment.toString(),
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+                // onTap: () {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => profilepage(
+                //         email: student[index].enrollment.toString(),
+                //       ),
+                //     ),
+                //   );
+                // },
+              ),
+            ),
           ),
         ),
       ),

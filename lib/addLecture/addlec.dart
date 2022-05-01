@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:admin/qrcode/qrcode.dart';
 import 'package:admin/screens/basehome.dart';
 import 'package:admin/user/user.dart';
@@ -29,78 +31,47 @@ class _editState extends State<addlec> {
             autovalidateMode: AutovalidateMode.always,
             child: Column(
               children: [
-                // Padding(
-                //   padding: EdgeInsets.all(20),
-                //   child: TextFormField(
-                //     onChanged: (ValueKey) {
-                //       setState(() {
-                //         uservalue.name = ValueKey;
-                //       });
-                //     },
-                //     decoration: InputDecoration(
-                //       border: OutlineInputBorder(),
-                //       labelText: 'Name',
-                //       hintText: 'Enter Full Name',
-                //     ),
-                //   ),
-                // ),
-                // Padding(
-                //   padding: EdgeInsets.all(20),
-                //   child: TextFormField(
-                //     onChanged: (ValueKey) {
-                //       setState(() {
-                //         uservalue.dob = ValueKey;
-                //       });
-                //     },
-                //     decoration: InputDecoration(
-                //       border: OutlineInputBorder(),
-                //       labelText: 'Date of Birth',
-                //       hintText: 'Enter DOB in dd/mm/yyyy formate',
-                //     ),
-                //   ),
-                // ),
-                // Padding(
-                //   padding: EdgeInsets.all(20),
-                //   child: TextFormField(
-                //     onChanged: (ValueKey) {
-                //       setState(() {
-                //         uservalue.blood = ValueKey;
-                //       });
-                //     },
-                //     decoration: InputDecoration(
-                //       border: OutlineInputBorder(),
-                //       labelText: 'Blood Group',
-                //       hintText: 'Enter Blood Group',
-                //     ),
-                //   ),
-                // ),
                 Padding(
                   padding: EdgeInsets.all(20),
-                  child: TextFormField(
-                    onChanged: (ValueKey) {
-                      setState(() {
-                        lecture.subject = ValueKey;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Subject',
-                      hintText: 'Enter Subject',
+                  child: Container(
+                    // width: MediaQuery.of(context).size.width * 0.7,
+                    color: Colors.white70,
+                    // child: Card(
+                    //   child: MyStatefulWidget(),
+                    // ),
+
+                    child: TextFormField(
+                      onChanged: (ValueKey) {
+                        setState(() {
+                          lecture.subject = ValueKey;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Subject',
+                        hintText: 'Enter Subject',
+                      ),
                     ),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(20),
-                  child: TextFormField(
-                    onChanged: (ValueKey) {
-                      setState(() {
-                        lecture.sem = ValueKey;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Semester',
-                      hintText: 'Enter Semester',
+                  child: Container(
+                    // width: MediaQuery.of(context).size.width * 0.7,
+                    // child: Card(
+                    //   child: MyStatefulWidget(),
+                    // ),
+                    child: TextFormField(
+                      onChanged: (ValueKey) {
+                        setState(() {
+                          lecture.sem = ValueKey;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Semester',
+                        hintText: 'Enter Semester',
+                      ),
                     ),
                   ),
                 ),
@@ -119,22 +90,6 @@ class _editState extends State<addlec> {
                     ),
                   ),
                 ),
-                // Padding(
-                //   padding: EdgeInsets.all(20),
-                //   child: TextFormField(
-                //     onChanged: (ValueKey) {
-                //       setState(() {
-                //         uservalue.department = ValueKey;
-                //       });
-                //     },
-                //     decoration: InputDecoration(
-                //       border: OutlineInputBorder(),
-                //       labelText: 'Department',
-                //       hintText: 'Enter Department',
-                //     ),
-                //   ),
-                // ),
-
                 Padding(
                   padding: EdgeInsets.all(20),
                   child: Container(
@@ -188,6 +143,8 @@ class _editState extends State<addlec> {
             ":" +
             now.year.toString() +
             ":" +
+            now.hour.toString() +
+            ":" +
             lecture.sem! +
             ":" +
             lecture.subject!)
@@ -202,8 +159,81 @@ class _editState extends State<addlec> {
             ":" +
             now.year.toString(),
         'Time': time,
+        'Key': now.hour.toString()
       },
     );
     isloading = false;
+  }
+}
+
+class MyStatefulWidget extends StatefulWidget {
+  const MyStatefulWidget({Key? key}) : super(key: key);
+
+  @override
+  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+  bool isError = true;
+  String dropdownValue = 'One';
+  String? email = FirebaseAuth.instance.currentUser!.email;
+  List<Subject> subject = [];
+  @override
+  void initState() {
+    getsubject()
+        .then((value) => {
+              setState(() {
+                subject = value;
+                isLoading = false;
+              })
+            })
+        .onError((error, stackTrace) {
+      print(error);
+      print(stackTrace);
+      setState(() {
+        isError = true;
+      });
+      throw error!;
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      icon: const Icon(Icons.arrow_downward),
+      elevation: 16,
+      style: const TextStyle(color: Colors.deepPurple),
+      underline: Container(
+        height: 2,
+        color: Colors.deepPurpleAccent,
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          dropdownValue = newValue!;
+        });
+      },
+      items: <String>['One', 'Two', 'Free', 'Four']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+
+  Future<List<Subject>> getsubject() async {
+    List<Subject> events = [];
+    final snapShot = await FirebaseFirestore.instance
+        .collection('admin')
+        .doc(email)
+        .collection('subject')
+        .get();
+    for (final doc in snapShot.docs) {
+      events.add(Subject.fromDocumentsubject(doc));
+    }
+    return events;
   }
 }
